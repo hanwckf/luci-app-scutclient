@@ -14,47 +14,47 @@ function index()
 	local uci = require "luci.model.uci".cursor()
 	local mainorder = uci:get_first("scutclient", "luci", "mainorder", 10)
 	if not uci:get_first("scutclient", "luci", "configured", false) then
-		entry({"admin", "scutclient"},
-			alias("admin", "scutclient", "settings"),
+		entry({"admin", "network", "scutclient"},
+			alias("admin", "network", "scutclient", "settings"),
 			"华南理工大学客户端",
 			mainorder
 		)
 
-		entry({"admin", "scutclient", "settings"},
+		entry({"admin", "network", "scutclient", "settings"},
 			cbi("scutclient/scutclient"),
 			"设置",
 			10
 		).leaf = true
 
-		entry({"admin", "scutclient", "status"},
+		entry({"admin", "network", "scutclient", "status"},
 			call("action_status"),
 			"状态",
 			20
 		).leaf = true
 	else
-		entry({"admin", "scutclient"},
-			alias("admin", "scutclient", "status"),
+		entry({"admin", "network", "scutclient"},
+			alias("admin", "network", "scutclient", "status"),
 			"华南理工大学客户端",
 			mainorder
 		)
 
-		entry({"admin", "scutclient", "status"},
+		entry({"admin", "network", "scutclient", "status"},
 			call("action_status"),
 			"状态",
 			10
 		).leaf = true
 
-		entry({"admin", "scutclient", "settings"},
+		entry({"admin", "network", "scutclient", "settings"},
 			cbi("scutclient/scutclient"),
 			"设置",
 			20
 		).leaf = true
 	end
-	entry({"admin", "scutclient", "logs"}, template("scutclient/logs"), "日志", 30).leaf = true
-	entry({"admin", "scutclient", "about"}, call("action_about"), "关于", 40).leaf = true
-	entry({"admin", "scutclient", "get_log"}, call("get_log"))
-	entry({"admin", "scutclient", "netstat"}, call("get_netstat"))
-	entry({"admin", "scutclient", "scutclient-log.tar"}, call("get_dbgtar"))
+	entry({"admin", "network", "scutclient", "logs"}, template("scutclient/logs"), "日志", 30).leaf = true
+	entry({"admin", "network", "scutclient", "about"}, call("action_about"), "关于", 40).leaf = true
+	entry({"admin", "network", "scutclient", "get_log"}, call("get_log"))
+	entry({"admin", "network", "scutclient", "netstat"}, call("get_netstat"))
+	entry({"admin", "network", "scutclient", "scutclient-log.tar"}, call("get_dbgtar"))
 end
 
 
@@ -84,11 +84,6 @@ function action_status()
 	if luci.http.formvalue("redial") == "1" then
 		luci.sys.call("/etc/init.d/scutclient stop > /dev/null")
 		luci.sys.call("/etc/init.d/scutclient start > /dev/null")
-	end
-	if luci.http.formvalue("move_tag") == "1" then
-		luci.sys.call("uci set scutclient.@luci[-1].mainorder=90")
-		luci.sys.call("uci commit")
-		luci.sys.call("rm -rf /tmp/luci-*cache")
 	end
 end
 
